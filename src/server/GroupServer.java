@@ -127,10 +127,6 @@ public class GroupServer {
                         clientOutput.println("HELP " + "Support commands are: " +
                                 "~'All Groups' : ag | ag N, where N is a number of groups." +
                                 "~'Help Menu' : HELP");
-                    } else {
-                        for(PrintWriter outputStream : outputStreams) {
-                            outputStream.println("MESSAGE " + userID + ": " + input);
-                        }
                     }
                 }
 

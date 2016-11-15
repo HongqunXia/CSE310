@@ -48,10 +48,10 @@ public class GroupClientCmdLine {
     /**
      * Writes what the User types to Output Stream
      */
-    private void retrieveClientMessage(){
+    private String retrieveClientMessage(){
         System.out.print("Input: ");
         String clientMessage = inputScanner.nextLine();
-        output.println(clientMessage);
+        return clientMessage;
     }
 
     /**
@@ -73,7 +73,7 @@ public class GroupClientCmdLine {
         while(true){
 
             if(userAccepted){
-                retrieveClientMessage();
+                output.println(retrieveClientMessage());
             }
 
             String currentServerMessage = input.readLine();
@@ -86,10 +86,6 @@ public class GroupClientCmdLine {
                 System.out.println("User ID was accepted. Welcome to Interest Groups." + "\n"
                         + "You may begin typing..");
                 userAccepted = true;
-            }
-
-            else if(currentServerMessage.startsWith("MESSAGE")){
-                printMessage(currentServerMessage.substring(8));
             }
 
             else if(currentServerMessage.startsWith("GROUPS")){
