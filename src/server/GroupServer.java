@@ -101,6 +101,13 @@ public class GroupServer {
                 clientOutput.println("USERIDACCEPTED");
                 outputStreams.add(clientOutput);
 
+                groups.add("comp.programming");
+                groups.add("comp.lang.python");
+                groups.add("comp.lang.java");
+                groups.add("comp.lang.C");
+                groups.add("comp.os.threads");
+                groups.add("comp.os.signals");
+
                 //Now begin grabbing messages from this client and printing the messages to all other users
                 while (true) {
                     String input = clientInput.readLine();
@@ -109,8 +116,21 @@ public class GroupServer {
                         return;
                     }
 
-                    for(PrintWriter outputStream : outputStreams) {
-                        outputStream.println("MESSAGE " + userID + ": " + input);
+                    if(input.equals("ag")){
+                        String groupString = "GROUPS ";
+                        int counter = 1;
+                        for(String group : groups){
+                            groupString += "~" + counter++ + ". ( "+ ") " + group;
+                        }
+                        clientOutput.println(groupString);
+                    } else if(input.equals("HELP")){
+                        clientOutput.println("HELP " + "Support commands are: " +
+                                "~'All Groups' : ag | ag N, where N is a number of groups." +
+                                "~'Help Menu' : HELP");
+                    } else {
+                        for(PrintWriter outputStream : outputStreams) {
+                            outputStream.println("MESSAGE " + userID + ": " + input);
+                        }
                     }
                 }
 
