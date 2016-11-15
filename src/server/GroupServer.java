@@ -74,6 +74,8 @@ public class GroupServer {
             boolean uniqueID = false;
 
             try {
+
+                //Create the input stream and output stream for this client
                 clientInput = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 clientOutput = new PrintWriter(socket.getOutputStream(), true);
 
