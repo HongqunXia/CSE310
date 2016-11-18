@@ -28,7 +28,7 @@ public class GroupServer {
     /**
      * List of Current Groups
      */
-    public static ArrayList<String> groups = new ArrayList<>();
+    public static ArrayList<Group> groups;
 
     /**
      * Main method that spins up a thread that handles each new client
@@ -101,12 +101,8 @@ public class GroupServer {
                 clientOutput.println("USERIDACCEPTED");
                 outputStreams.add(clientOutput);
 
-                groups.add("comp.programming");
-                groups.add("comp.lang.python");
-                groups.add("comp.lang.java");
-                groups.add("comp.lang.C");
-                groups.add("comp.os.threads");
-                groups.add("comp.os.signals");
+                //Creates an initial list of groups
+                groups = instantiateGroupList();
 
                 //Now begin grabbing messages from this client and printing the messages to all other users
                 while (true) {
@@ -119,8 +115,8 @@ public class GroupServer {
                     if(input.equals("ag")){
                         String groupString = "GROUPS ";
                         int counter = 1;
-                        for(String group : groups){
-                            groupString += "~" + counter++ + ". ( "+ ") " + group;
+                        for(Group group : groups){
+                            groupString += "~" + counter++ + ". ( "+ ") " + group.getName();
                         }
                         clientOutput.println(groupString);
                     } else if(input.equals("HELP")){
@@ -147,6 +143,26 @@ public class GroupServer {
                     System.out.println(e);
                 }
             }
+        }
+
+        private ArrayList<Group> instantiateGroupList(){
+            Group group1 = new Group("comp.programming");
+            Group group2 = new Group("comp.lang.python");
+            Group group3 = new Group("comp.lang.java");
+            Group group4 = new Group("comp.lang.C");
+            Group group5 = new Group("comp.os.threads");
+            Group group6 = new Group("comp.os.signals");
+
+            ArrayList<Group> groupList = new ArrayList<>();
+
+            groupList.add(group1);
+            groupList.add(group2);
+            groupList.add(group3);
+            groupList.add(group4);
+            groupList.add(group5);
+            groupList.add(group6);
+
+            return groupList;
         }
     }
 }
