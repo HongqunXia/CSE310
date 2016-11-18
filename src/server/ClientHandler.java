@@ -208,7 +208,7 @@ class ClientHandler extends Thread{
 
         for(Group group : groups){
             if(group.isSubscribed()){
-                groupString += "~" + counter++ + "." + group.getNumOfNewPosts() + group.getName();
+                groupString += "~" + counter++ + "." + group.getNumOfNewPosts() + " " + group.getName();
             }
         }
         clientOutput.println(groupString);
@@ -220,7 +220,7 @@ class ClientHandler extends Thread{
 
         for(int i = 1; i < n; i++){
             if(groups.get(i-1).isSubscribed()){
-                groupString += "~" + counter++ + ". " + groups.get(i-1).getNumOfNewPosts() + " "+ groups.get(i-1).getName();
+                groupString += "~" + counter++ + ". " + groups.get(i-1).getNumOfNewPosts() + " " + groups.get(i-1).getName();
             }
         }
         clientOutput.println(groupString);

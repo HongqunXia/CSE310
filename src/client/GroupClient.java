@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class GroupClient {
-    
+
     private PrintWriter output;
     private Scanner inputScanner;
 
