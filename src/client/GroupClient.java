@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class GroupClientCmdLine {
+public class GroupClient {
 
     private BufferedReader input;
     private PrintWriter output;
@@ -17,7 +17,7 @@ public class GroupClientCmdLine {
     /**
      * Private Constructor to instantiate the Scanner
      */
-    private GroupClientCmdLine(){
+    private GroupClient(){
         inputScanner = new Scanner(System.in);
     }
 
@@ -103,7 +103,7 @@ public class GroupClientCmdLine {
     }
 
     public static void main(String[] args){
-        GroupClientCmdLine client = new GroupClientCmdLine();
+        GroupClient client = new GroupClient();
         try{
             client.run();
         } catch (IOException e){
