@@ -1,7 +1,6 @@
 package server;
 
 public class Group {
-
     private String name;
     private boolean subscribe;
     private int numOfNewPosts;
