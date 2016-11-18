@@ -64,6 +64,8 @@ public class GroupClient {
         input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         output = new PrintWriter(socket.getOutputStream(), true);
 
+        System.out.println("Welcome to Interest Groups. \n" +
+                "You can use the command login and help at point.");
         retrieveClientMessage();
 
         while(true){
