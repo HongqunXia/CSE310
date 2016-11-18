@@ -48,10 +48,10 @@ public class GroupClientCmdLine {
     /**
      * Writes what the User types to Output Stream
      */
-    private String retrieveClientMessage(){
+    private void retrieveClientMessage(){
         System.out.print("Input: ");
         String clientMessage = inputScanner.nextLine();
-        return clientMessage;
+        output.println(clientMessage);
     }
 
     /**
@@ -73,7 +73,7 @@ public class GroupClientCmdLine {
         while(true){
 
             if(userAccepted){
-                output.println(retrieveClientMessage());
+                retrieveClientMessage();
             }
 
             String currentServerMessage = input.readLine();

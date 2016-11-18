@@ -71,7 +71,7 @@ public class GroupServer {
          */
         public void run() {
 
-            boolean uniqueID = false;
+            boolean allGroupsSubMenu = false;
 
             try {
 
@@ -104,7 +104,6 @@ public class GroupServer {
                 //Creates an initial list of groups
                 groups = instantiateGroupList();
 
-                //Now begin grabbing messages from this client and printing the messages to all other users
                 while (true) {
                     String input = clientInput.readLine();
 
@@ -112,17 +111,47 @@ public class GroupServer {
                         return;
                     }
 
+                    //All Groups command and Enter into sub menu
                     if(input.equals("ag")){
-                        String groupString = "GROUPS ";
-                        int counter = 1;
-                        for(Group group : groups){
-                            groupString += "~" + counter++ + ". ( "+ ") " + group.getName();
+                        allGroupsSubMenu = true;
+                        String number = input.substring(3);
+
+                        if(number.equals("")){
+                            printAllGroups();
+                        } else {
+                            printNGroups(Integer.parseInt(number));
                         }
-                        clientOutput.println(groupString);
+                        while(allGroupsSubMenu){
+                            input = clientInput.readLine();
+
+                            if(input.startsWith("s")){
+                                handleSubscriptions(input, true);
+                            } else if(input.startsWith("u")) {
+                                handleSubscriptions(input, false);
+                            } else if(input.equals("q")){
+                                allGroupsSubMenu = false;
+                            }
+                        }
+
+                    } else if(input.startsWith("sg")){
+                        String number = input.substring(3);
+
+                        //No N provided
+                        if(number.equals("")){
+                            printAllSubscribedGroups();
+                        } else {
+                            printNSubscribedGroups(Integer.parseInt(number));
+                        }
+
+                    } else if(input.equals("rg")){
+
+                        //TODO add Read Group Functionality
+
                     } else if(input.equals("HELP")){
-                        clientOutput.println("HELP " + "Support commands are: " +
-                                "~'All Groups' : ag | ag N, where N is a number of groups." +
-                                "~'Help Menu' : HELP");
+                        printHelpMenu();
+                    } else if(input.equals("LOGOUT")){
+
+                        //TODO add Logout Functionality
                     }
                 }
 
@@ -146,12 +175,12 @@ public class GroupServer {
         }
 
         private ArrayList<Group> instantiateGroupList(){
-            Group group1 = new Group("comp.programming");
-            Group group2 = new Group("comp.lang.python");
-            Group group3 = new Group("comp.lang.java");
-            Group group4 = new Group("comp.lang.C");
-            Group group5 = new Group("comp.os.threads");
-            Group group6 = new Group("comp.os.signals");
+            Group group1 = new Group("comp.programming", 18);
+            Group group2 = new Group("comp.lang.python", 2);
+            Group group3 = new Group("comp.lang.java", 3);
+            Group group4 = new Group("comp.lang.C", 27);
+            Group group5 = new Group("comp.os.threads", 0);
+            Group group6 = new Group("comp.os.signals", 0);
 
             ArrayList<Group> groupList = new ArrayList<>();
 
@@ -163,6 +192,77 @@ public class GroupServer {
             groupList.add(group6);
 
             return groupList;
+        }
+
+        private void printHelpMenu(){
+            clientOutput.println("HELP " + "Support commands are: " +
+                    "~'All Groups' : ag | ag N, where N is a number of groups." +
+                    "~'Help Menu' : HELP");
+        }
+
+        private void printAllGroups(){
+            String groupString = "GROUPS ";
+            int counter = 1;
+            for(Group group : groups){
+                if(group.isSubscribed()){
+                    groupString += "~" + counter++ + ". (s) " + group.getName();
+                } else {
+                    groupString += "~" + counter++ + ". ( "+ ") " + group.getName();
+                }
+            }
+            clientOutput.println(groupString);
+        }
+
+        private void printNGroups(int n){
+            String groupString = "GROUPS ";
+            int counter = 1;
+
+            for(int i = 1; i < n; i++){
+                if(groups.get(i-1).isSubscribed()){
+                    groupString += "~" + counter++ + "." + groups.get(i-1).getNumOfNewPosts() + groups.get(i-1).getName();
+                } else {
+                    groupString += "~" + counter++ + ". ( "+ ") " + groups.get(i-1).getName();
+                }
+            }
+            clientOutput.println(groupString);
+        }
+
+        private void printAllSubscribedGroups(){
+            String groupString = "GROUPS ";
+            int counter = 1;
+
+            for(Group group : groups){
+                if(group.isSubscribed()){
+                    groupString += "~" + counter++ + "." + group.getNumOfNewPosts() + group.getName();
+                }
+            }
+            clientOutput.println(groupString);
+        }
+
+        private void printNSubscribedGroups(int n){
+            String groupString = "GROUPS ";
+            int counter = 1;
+
+            for(int i = 1; i < n; i++){
+                if(groups.get(i-1).isSubscribed()){
+                    groupString += "~" + counter++ + "." + groups.get(i-1).getNumOfNewPosts() + groups.get(i-1).getName();
+                }
+            }
+            clientOutput.println(groupString);
+        }
+
+        private void handleSubscriptions(String input, boolean subscribing){
+            String inputArray[] = input.split(" ");
+
+            if(subscribing){
+                for(int i = 1; i < inputArray.length; i++){
+                    groups.get(Integer.parseInt(inputArray[i])-1).subscribe();
+                }
+            } else {
+                for(int i = 1; i < inputArray.length; i++){
+                    groups.get(Integer.parseInt(inputArray[i])-1).unsubscribe();
+                }
+            }
         }
     }
 }
