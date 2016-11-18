@@ -13,7 +13,7 @@ public class GroupClient {
     private BufferedReader input;
     private PrintWriter output;
     private Scanner inputScanner;
-    private boolean userAccepted;
+
     /**
      * Private Constructor to instantiate the Scanner
      */
