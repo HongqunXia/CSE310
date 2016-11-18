@@ -170,6 +170,9 @@ class ClientHandler extends Thread{
     }
 
     private void printHelpMenu(){
+
+        //TODO Update Help Menu
+
         clientOutput.println("HELP " + "Support commands are: " +
                 "~'All Groups' : ag | ag N, where N is a number of groups." +
                 "~'Help Menu' : HELP");
