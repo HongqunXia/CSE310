@@ -9,8 +9,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class GroupClient {
-
-    private BufferedReader input;
+    
     private PrintWriter output;
     private Scanner inputScanner;
 
@@ -61,7 +60,7 @@ public class GroupClient {
      */
     private void run() throws IOException {
         Socket socket = new Socket(getServerAddress(), 8026);
-        input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         output = new PrintWriter(socket.getOutputStream(), true);
 
         System.out.println("Welcome to Interest Groups. \n" +
