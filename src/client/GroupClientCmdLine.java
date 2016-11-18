@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GroupClientCmdLine {
@@ -15,16 +14,11 @@ public class GroupClientCmdLine {
     private PrintWriter output;
     private Scanner inputScanner;
     private boolean userAccepted;
-
-    private ArrayList<String> availableGroups = new ArrayList<>();
-
     /**
      * Private Constructor to instantiate the Scanner
      */
     private GroupClientCmdLine(){
         inputScanner = new Scanner(System.in);
-        availableGroups.add("comp.programming");
-        availableGroups.add("comp.os.threads");
     }
 
     /**
@@ -70,32 +64,32 @@ public class GroupClientCmdLine {
         input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         output = new PrintWriter(socket.getOutputStream(), true);
 
+        retrieveClientMessage();
+
         while(true){
-
-            if(userAccepted){
-                retrieveClientMessage();
-            }
-
             String currentServerMessage = input.readLine();
 
             if(currentServerMessage.startsWith("CREATEUSERID")){
                 output.println(getUserID());
-            }
-
-            else if(currentServerMessage.startsWith("USERIDACCEPTED")){
+            } else if(currentServerMessage.startsWith("USERIDACCEPTED")){
                 System.out.println("User ID was accepted. Welcome to Interest Groups." + "\n"
                         + "You may begin typing..");
-                userAccepted = true;
-            }
-
-            else if(currentServerMessage.startsWith("GROUPS")){
+            } else if(currentServerMessage.startsWith("GROUPS")){
                 String groupArray[] = currentServerMessage.split("~");
                 for(int i = 1; i < groupArray.length; i++){
                     printMessage(groupArray[i]);
                 }
-            }
-
-            else if(currentServerMessage.startsWith("HELP")){
+            } else if(currentServerMessage.equals("GETNEWINPUT")){
+                retrieveClientMessage();
+            } else if(currentServerMessage.equals("ALLGROUPSUBMENU")){
+                System.out.println("\nGroup sub menu. \n" +
+                        "The allowed commands are s, u, n, and q exits.");
+                retrieveClientMessage();
+            } else if(currentServerMessage.equals("LOGOUT")){
+                socket.close();
+                System.out.print("You have successfully logged out.");
+                return;
+            } else if(currentServerMessage.startsWith("HELP")){
                 String helpArray[] = currentServerMessage.split("~");
                 for(int i = 0; i < helpArray.length; i++){
                     if(i == 0){

@@ -79,22 +79,28 @@ public class GroupServer {
                 clientInput = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 clientOutput = new PrintWriter(socket.getOutputStream(), true);
 
-                //Ask the client for an ID to use. If the ID is already in use, request for another
-                //Put a lock around the userIDs list so there is no thread interference
-                while (true) {
-                    clientOutput.println("CREATEUSERID");
-                    userID = clientInput.readLine();
-                    if (userID == null) {
-                        return;
-                    }
+                String in = clientInput.readLine();
 
-                    //Lock the list of userIDs
-                    synchronized (userIDs) {
-                        if (!userIDs.contains(userID)) {
-                            userIDs.add(userID);
-                            break;
+                if(in.equals("login")){
+                    //Ask the client for an ID to use. If the ID is already in use, request for another
+                    //Put a lock around the userIDs list so there is no thread interference
+                    while (true) {
+                        clientOutput.println("CREATEUSERID");
+                        userID = clientInput.readLine();
+                        if (userID == null) {
+                            return;
+                        }
+
+                        //Lock the list of userIDs
+                        synchronized (userIDs) {
+                            if (!userIDs.contains(userID)) {
+                                userIDs.add(userID);
+                                break;
+                            }
                         }
                     }
+                } else if(in.equals("help")){
+                    printHelpMenu();
                 }
 
                 //Successfully created Unique UserID so add them to the output streams
@@ -105,6 +111,7 @@ public class GroupServer {
                 groups = instantiateGroupList();
 
                 while (true) {
+                    clientOutput.println("GETNEWINPUT");
                     String input = clientInput.readLine();
 
                     if (input == null) {
@@ -112,9 +119,9 @@ public class GroupServer {
                     }
 
                     //All Groups command and Enter into sub menu
-                    if(input.equals("ag")){
+                    if(input.startsWith("ag")){
                         allGroupsSubMenu = true;
-                        String number = input.substring(3);
+                        String number = input.substring(2);
 
                         if(number.equals("")){
                             printAllGroups();
@@ -122,20 +129,28 @@ public class GroupServer {
                             printNGroups(Integer.parseInt(number));
                         }
                         while(allGroupsSubMenu){
+                            clientOutput.println("ALLGROUPSUBMENU");
                             input = clientInput.readLine();
 
-                            if(input.startsWith("s")){
+                            if(input == null){
+                                return;
+                            }
+                            else if(input.startsWith("s")){
                                 handleSubscriptions(input, true);
                             } else if(input.startsWith("u")) {
                                 handleSubscriptions(input, false);
+                            } else if(input.equals("n")){
+
+                                //TODO Print the next 'N' Groups.
+
                             } else if(input.equals("q")){
                                 allGroupsSubMenu = false;
+                                clientOutput.flush();
                             }
                         }
 
                     } else if(input.startsWith("sg")){
-                        String number = input.substring(3);
-
+                        String number = input.substring(2);
                         //No N provided
                         if(number.equals("")){
                             printAllSubscribedGroups();
@@ -147,11 +162,11 @@ public class GroupServer {
 
                         //TODO add Read Group Functionality
 
-                    } else if(input.equals("HELP")){
+                    } else if(input.equals("help")){
                         printHelpMenu();
-                    } else if(input.equals("LOGOUT")){
-
-                        //TODO add Logout Functionality
+                    } else if(input.equals("logout")){
+                        clientOutput.println("LOGOUT");
+                        return;
                     }
                 }
 
@@ -245,7 +260,7 @@ public class GroupServer {
 
             for(int i = 1; i < n; i++){
                 if(groups.get(i-1).isSubscribed()){
-                    groupString += "~" + counter++ + "." + groups.get(i-1).getNumOfNewPosts() + groups.get(i-1).getName();
+                    groupString += "~" + counter++ + ". " + groups.get(i-1).getNumOfNewPosts() + " "+ groups.get(i-1).getName();
                 }
             }
             clientOutput.println(groupString);
