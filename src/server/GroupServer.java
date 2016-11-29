@@ -1,14 +1,20 @@
 package server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
+import client.GroupClient;
 
+import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Small Server class that just handles creating the server socket
+ * and spawning new ClientHandler Threads.
+ */
 public class GroupServer {
+
+    //TODO Create methods to read ClientMap and Groups from File
 
     /**
      * The port that the server listens on.
@@ -16,19 +22,14 @@ public class GroupServer {
     private static final int PORT = 8026;
 
     /**
-     * List of Unique User IDs
+     * Map of Saved Clients
      */
-    private static ArrayList<String> userIDs = new ArrayList<>();
-
-    /**
-     * List of available Client output streams
-     */
-    private static ArrayList<PrintWriter> outputStreams = new ArrayList<>();
+    private static Map<String, GroupClient> clientMap = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * List of Current Groups
      */
-    private static ArrayList<Group> groups;
+    private static ArrayList<Group> groups = new ArrayList<>();
 
     /**
      * Main method that spins up a thread that handles each new client
@@ -38,9 +39,14 @@ public class GroupServer {
     public static void main(String[] args) throws Exception{
         ServerSocket serverSocket = new ServerSocket(PORT);
         System.out.println("Group Server is running...");
+
+        GroupClient tempClient = new GroupClient("Jimmy", groups);
+
+        clientMap.put("Jimmy", tempClient);
+
         try{
             while(true){
-                new ClientHandler(serverSocket.accept(), userIDs, outputStreams, groups).start();
+                new ClientHandler(serverSocket.accept(), clientMap, groups).start();
             }
         } finally {
             serverSocket.close();

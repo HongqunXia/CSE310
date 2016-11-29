@@ -1,17 +1,31 @@
 package client;
 
 
+import server.Group;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GroupClient {
 
+    private String clientID;
     private PrintWriter output;
     private Scanner inputScanner;
+    private ArrayList<Group> subscribedGroups;
+
+    /**
+     * Public Constructor for the Server
+     * @param clientID
+     */
+    public GroupClient(String clientID, ArrayList<Group> subscribedGroups){
+        this.clientID = clientID;
+        this.subscribedGroups = subscribedGroups;
+    }
 
     /**
      * Private Constructor to instantiate the Scanner
@@ -34,17 +48,23 @@ public class GroupClient {
      * @return userID
      */
     private String getUserID(){
-        System.out.print("Create a User ID: ");
+        System.out.print("Login with your Client ID: ");
         return inputScanner.nextLine();
     }
 
     /**
-     * Writes what the User types to Output Stream
+     * Writes what the User types to Output Stream.
+     * Prevents the client from typing garbage to the server.
      */
     private void retrieveClientMessage(){
         System.out.print("Input: ");
         String clientMessage = inputScanner.nextLine();
-        output.println(clientMessage);
+        if(!(clientMessage.equals("login") || clientMessage.equals("help"))){
+            System.out.println("Please only enter in 'login' or 'help'.");
+            retrieveClientMessage();
+        } else {
+            output.println(clientMessage);
+        }
     }
 
     /**
@@ -64,7 +84,7 @@ public class GroupClient {
         output = new PrintWriter(socket.getOutputStream(), true);
 
         System.out.println("Welcome to Interest Groups. \n" +
-                "You can use the command login and help at point.");
+                "You can use the commands login and help.");
         retrieveClientMessage();
 
         /**
@@ -72,11 +92,13 @@ public class GroupClient {
          */
         while(true){
             String currentServerMessage = input.readLine();
-
-            if(currentServerMessage.startsWith("CREATEUSERID")){
+            if(currentServerMessage.startsWith("CLIENTLOGIN")){
                 output.println(getUserID());
             } else if(currentServerMessage.startsWith("USERIDACCEPTED")){
                 System.out.println("User ID was accepted. Welcome to Interest Groups." + "\n"
+                        + "You may begin typing..");
+            } else if(currentServerMessage.startsWith("SUCCESSFULLLOGIN")){
+                System.out.println("You successfully logged back in. Welcome back to Interest Groups." + "\n"
                         + "You may begin typing..");
             } else if(currentServerMessage.startsWith("GROUPS")){
                 String groupArray[] = currentServerMessage.split("~");
