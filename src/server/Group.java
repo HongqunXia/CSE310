@@ -1,13 +1,20 @@
 package server;
 
+import java.util.ArrayList;
+
+/**
+ * Group Class that contains all the information for a Group Object
+ */
 public class Group {
     private String name;
     private boolean subscribe;
     private int numOfNewPosts;
+    private ArrayList<Post> posts;
 
-    public Group(String groupName, int numOfNewPosts){
+    public Group(String groupName, int numOfNewPosts, ArrayList<Post> posts){
         this.name = groupName;
         this.numOfNewPosts = numOfNewPosts;
+        this.posts = posts;
     }
 
     public String getName(){
@@ -36,5 +43,13 @@ public class Group {
 
     public void unsubscribe(){
         subscribe = false;
+    }
+
+    public ArrayList<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(ArrayList<Post> posts) {
+        this.posts = posts;
     }
 }

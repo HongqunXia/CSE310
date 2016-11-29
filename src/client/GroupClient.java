@@ -67,6 +67,9 @@ public class GroupClient {
                 "You can use the command login and help at point.");
         retrieveClientMessage();
 
+        /**
+         * While Loop to continuously communicate with the server
+         */
         while(true){
             String currentServerMessage = input.readLine();
 
@@ -103,6 +106,9 @@ public class GroupClient {
         }
     }
 
+    /**
+     * Main Method that instantiates the GroupClient and calls the run method
+     */
     public static void main(String[] args){
         GroupClient client = new GroupClient();
         try{

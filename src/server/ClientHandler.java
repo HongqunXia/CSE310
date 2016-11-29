@@ -7,21 +7,23 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * The main thread class that handles all of the servers actions.
+ * Does all communication with the client
+ */
 class ClientHandler extends Thread{
     private String userID;
     private Socket socket;
     private PrintWriter clientOutput;
     private final ArrayList<String> userIDs;
-    private ArrayList<PrintWriter> outputStreams;
     private ArrayList<Group> groups;
 
     /**
      * Constructor to get the socket from server
      */
-    ClientHandler(Socket socket, ArrayList<String> userIDs, ArrayList<PrintWriter> outputStreams, ArrayList<Group> groups){
+    ClientHandler(Socket socket, ArrayList<String> userIDs, ArrayList<Group> groups){
         this.socket = socket;
         this.userIDs = userIDs;
-        this.outputStreams = outputStreams;
         this.groups = groups;
     }
 
@@ -34,7 +36,6 @@ class ClientHandler extends Thread{
         boolean allGroupsSubMenu;
 
         try {
-
             //Create the input stream and output stream for this client
             BufferedReader clientInput = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             clientOutput = new PrintWriter(socket.getOutputStream(), true);
@@ -52,8 +53,8 @@ class ClientHandler extends Thread{
                     }
 
                     //Lock the list of userIDs
-                    synchronized (userIDs) {
-                        if (!userIDs.contains(userID)) {
+                    synchronized(userIDs){
+                        if(!userIDs.contains(userID) && (!userID.equals("")) && (!userID.equals(" "))){
                             userIDs.add(userID);
                             break;
                         }
@@ -65,7 +66,6 @@ class ClientHandler extends Thread{
 
             //Successfully created Unique UserID so add them to the output streams
             clientOutput.println("USERIDACCEPTED");
-            outputStreams.add(clientOutput);
 
             //Creates an initial list of groups
             groups = instantiateGroupList();
@@ -138,9 +138,6 @@ class ClientHandler extends Thread{
             if (userIDs != null) {
                 userIDs.remove(userID);
             }
-            if (clientOutput != null) {
-                outputStreams.remove(clientOutput);
-            }
             try {
                 socket.close();
             } catch (IOException e) {
@@ -150,12 +147,13 @@ class ClientHandler extends Thread{
     }
 
     private ArrayList<Group> instantiateGroupList(){
-        Group group1 = new Group("comp.programming", 18);
-        Group group2 = new Group("comp.lang.python", 2);
-        Group group3 = new Group("comp.lang.java", 3);
-        Group group4 = new Group("comp.lang.C", 27);
-        Group group5 = new Group("comp.os.threads", 0);
-        Group group6 = new Group("comp.os.signals", 0);
+        ArrayList<Post> groupPosts = null;
+        Group group1 = new Group("comp.programming", 18, groupPosts);
+        Group group2 = new Group("comp.lang.python", 2, groupPosts);
+        Group group3 = new Group("comp.lang.java", 3, groupPosts);
+        Group group4 = new Group("comp.lang.C", 27, groupPosts);
+        Group group5 = new Group("comp.os.threads", 0, groupPosts);
+        Group group6 = new Group("comp.os.signals", 0, groupPosts);
 
         ArrayList<Group> groupList = new ArrayList<>();
 
@@ -169,6 +167,9 @@ class ClientHandler extends Thread{
         return groupList;
     }
 
+    /**
+     * Prints out the help menu to the Client
+     */
     private void printHelpMenu(){
 
         //TODO Update Help Menu
@@ -178,6 +179,9 @@ class ClientHandler extends Thread{
                 "~'Help Menu' : HELP");
     }
 
+    /**
+     * Prints all the current Groups that the server has
+     */
     private void printAllGroups(){
         String groupString = "GROUPS ";
         int counter = 1;
@@ -191,6 +195,10 @@ class ClientHandler extends Thread{
         clientOutput.println(groupString);
     }
 
+    /**
+     * Prints a specified number of Groups
+     * @param n
+     */
     private void printNGroups(int n){
         String groupString = "GROUPS ";
         int counter = 1;
@@ -205,6 +213,9 @@ class ClientHandler extends Thread{
         clientOutput.println(groupString);
     }
 
+    /**
+     * Prints all the Groups that the client is currently subscribed to.
+     */
     private void printAllSubscribedGroups(){
         String groupString = "GROUPS ";
         int counter = 1;
@@ -217,6 +228,10 @@ class ClientHandler extends Thread{
         clientOutput.println(groupString);
     }
 
+    /**
+     * Prints a specified number of Groups that the current client is subscribed to
+     * @param n
+     */
     private void printNSubscribedGroups(int n){
         String groupString = "GROUPS ";
         int counter = 1;
@@ -229,6 +244,11 @@ class ClientHandler extends Thread{
         clientOutput.println(groupString);
     }
 
+    /**
+     * A method that handles the client subscriptions/unscriptions
+     * @param input
+     * @param subscribing
+     */
     private void handleSubscriptions(String input, boolean subscribing){
         String inputArray[] = input.split(" ");
 
