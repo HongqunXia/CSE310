@@ -59,12 +59,7 @@ public class GroupClient {
     private void retrieveClientMessage(){
         System.out.print("Input: ");
         String clientMessage = inputScanner.nextLine();
-        if(!(clientMessage.equals("login") || clientMessage.equals("help"))){
-            System.out.println("Please only enter in 'login' or 'help'.");
-            retrieveClientMessage();
-        } else {
-            output.println(clientMessage);
-        }
+        output.println(clientMessage);
     }
 
     /**
@@ -92,7 +87,7 @@ public class GroupClient {
          */
         while(true){
             String currentServerMessage = input.readLine();
-            if(currentServerMessage.startsWith("CLIENTLOGIN")){
+            if(currentServerMessage.equals("CLIENTLOGIN")){
                 output.println(getUserID());
             } else if(currentServerMessage.startsWith("USERIDACCEPTED")){
                 System.out.println("User ID was accepted. Welcome to Interest Groups." + "\n"
