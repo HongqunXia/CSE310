@@ -7,6 +7,7 @@ public class Post {
 
     private int id;
     private String subject;
+    private String contentBody;
 
     public Post(int id, String subject, String contentBody) {
         this.id = id;
@@ -14,7 +15,7 @@ public class Post {
         this.contentBody = contentBody;
     }
 
-    private String contentBody;
+
 
     public int getId() {
         return id;
